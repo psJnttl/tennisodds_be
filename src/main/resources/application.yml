@@ -1,0 +1,15 @@
+spring:
+    datasource:
+        platform: mysql
+        url: jdbc:mysql://localhost:3306/tennisodds
+        username: tennisgambler
+        password: TheOddsAreGood
+        driverClassName: com.mysql.jdbc.Driver
+    jpa:
+        database: MYSQL
+        hibernate:
+            ddl-auto: validate
+        show-sql: true
+        
+server:
+    port: 8081
