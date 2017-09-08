@@ -85,4 +85,12 @@ public class StatisticsService {
                 .build();
     }
 
+        public PlayerStatisticsDto getPlayerStatsWithDateRange(Long playerId, Date start, Date end) {
+        List<StatsNode> statsList = jdbcTemplate.query("SELECT date, player1, player2, odds1, odds2 FROM tennismatch "
+                + "WHERE date(date) BETWEEN ? AND ? AND (player1=? OR player2=?) ORDER BY date DESC",
+                new Object[]{start, end, playerId, playerId,},
+                (rs, rowNbr) -> statsResultExtractor(rs));
+        return playerStatsHandler(statsList, playerId);
+    }
+    
 }
