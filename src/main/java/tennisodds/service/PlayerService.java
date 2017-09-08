@@ -24,4 +24,16 @@ public class PlayerService {
                 .map(p -> new TennisPlayerDto(p.getId(), p.getName(), p.getNationality(), p.getAssociation()))
                 .collect(Collectors.toList());
     }
+
+    public TennisPlayerDto getOnePlayer(Long id) {
+        TennisPlayer player = playerRepository.getOne(id);
+        return new TennisPlayerDto(player.getId(), player.getName(), player.getNationality(), player.getAssociation());
+    }
+
+    public List<NationDto> listNationalities() {
+        List<TennisPlayer> players =  playerRepository.listNationalities();
+        return players.stream()
+                .map(p -> new NationDto(p.getNationality()))
+                .collect(Collectors.toList());
+    }
 }
