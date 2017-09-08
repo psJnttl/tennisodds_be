@@ -2,7 +2,9 @@ package tennisodds.service;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,9 @@ public class StatisticsService {
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
+    @Autowired
+    private PlayerService playerService;
 
     public PlayerStatisticsDto getPlayerStats(Long playerId) {
         List<StatsNode> statsList = jdbcTemplate.query("SELECT M.date, M.player1, M.player2 , M.odds1, M.odds2 FROM tennismatch M "
@@ -35,9 +40,49 @@ public class StatisticsService {
                 .build();
     }
 
-    private PlayerStatisticsDto playerStatsHandler(List<StatsNode> statsList, Long playerId) {
-        return null;
-               
+    private PlayerStatisticsDto playerStatsHandler(List<StatsNode> statsList, long playerId) { // playerId unboxed for filter
+        Date from = null, to = null;
+        Optional<Date> fromDate = statsList.stream()
+                .map(n -> n.getDate())
+                .min((a, b) -> a.compareTo(b));
+        if (fromDate.isPresent()) {
+            from = fromDate.get();
+        } // results should be in descending order, but let's be sure
+        Optional<Date> toDate = statsList.stream()
+                .map(n -> n.getDate())
+                .max((a, b) -> a.compareTo(b));
+        if (toDate.isPresent()) {
+            to = toDate.get();
+        }
+
+        long expectedWins = statsList.stream()
+                .filter(n -> n.getWinner() == playerId)
+                .filter(n -> n.getOdds1() < n.getOdds2())
+                .count();
+        long unexpectedWins = statsList.stream()
+                .filter(n -> n.getWinner() == playerId)
+                .filter(n -> n.getOdds1() > n.getOdds2())
+                .count();
+        long expectedLosses = statsList.stream()
+                .filter(n -> n.getLoser() == playerId)
+                .filter(n -> n.getOdds2() > n.getOdds1())
+                .count();
+        long unexpectedLosses = statsList.stream()
+                .filter(n -> n.getLoser() == playerId)
+                .filter(n -> n.getOdds2() < n.getOdds1())
+                .count();
+        TennisPlayerDto player = playerService.getOnePlayer(playerId);
+
+        return PlayerStatisticsDto.builder()
+                .name(player.getName())
+                .matchesTotal(statsList.size())
+                .from(from)
+                .to(to)
+                .expectedWins(expectedWins)
+                .expectedLosses(expectedLosses)
+                .unExpectedWins(unexpectedWins)
+                .unExpectedLosses(unexpectedLosses)
+                .build();
     }
 
 }

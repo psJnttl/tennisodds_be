@@ -9,8 +9,8 @@ import java.util.Objects;
  */
 public class StatsNode {
     private Date date;
-    private Long winner;
-    private Long loser;
+    private long winner;
+    private long loser;
     private double odds1;
     private double odds2;
 

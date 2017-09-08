@@ -16,6 +16,9 @@ public class PlayerStatisticsDto {
     private long expectedLosses;
     private long unExpectedLosses;
 
+    public PlayerStatisticsDto() {
+    }
+
     public static class Builder {
 
         private String name;
@@ -89,6 +92,39 @@ public class PlayerStatisticsDto {
         this.expectedLosses = expectedLosses;
         this.unExpectedLosses = unExpectedLosses;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public long getMatchesTotal() {
+        return matchesTotal;
+    }
+
+    public Date getFrom() {
+        return from;
+    }
+
+    public Date getTo() {
+        return to;
+    }
+
+    public long getExpectedWins() {
+        return expectedWins;
+    }
+
+    public long getUnExpectedWins() {
+        return unExpectedWins;
+    }
+
+    public long getExpectedLosses() {
+        return expectedLosses;
+    }
+
+    public long getUnExpectedLosses() {
+        return unExpectedLosses;
+    }
+    
     
     
 }
